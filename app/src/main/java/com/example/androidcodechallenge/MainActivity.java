@@ -52,13 +52,13 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                timer.setRingThickness(80);
+                timer.setRingThickness(20);
             }
         }, 5000);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                timer.setThemeColor(Color.MAGENTA);
+                timer.setThemeColor(Color.RED);
             }
         }, 8000);
     }
