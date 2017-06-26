@@ -55,4 +55,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        timer.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        timer.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        timer.stop();
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.androidcodechallenge.view;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,8 +10,10 @@ import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 
 /**
  * Created by tienl on 26/6/17.
@@ -18,12 +21,20 @@ import android.view.ViewGroup;
 
 public class Timer extends View {
 
+    private static final String TAG = Timer.class.getSimpleName();
+
+
     public static final int DEFAULT_THICKNESS = 50; //pixels
 
 
     private Paint arcPaint = new Paint();
 
     private RectF arcRect = new RectF(0, 0, 0, 0);
+
+    private ObjectAnimator ringRotationAnimator;
+
+    private int rotation = -90;
+
 
     public Timer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -47,14 +58,34 @@ public class Timer extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        arcRect.right = arcRect.bottom = w;
-
         setRingThickness((int) arcPaint.getStrokeWidth());
+    }
+
+    public void start() {
+        ringRotationAnimator = ObjectAnimator.ofInt(this, "ringRotation", -90, 270);
+        ringRotationAnimator.setDuration(1000).setRepeatCount(-1);
+        ringRotationAnimator.setInterpolator(new LinearInterpolator());
+        ringRotationAnimator.start();
+    }
+
+    public void stop() {
+        ringRotationAnimator.cancel();
+    }
+
+    public void pause() {
+        ringRotationAnimator.pause();
+    }
+
+    public void setRingRotation(int rotation) {
+        Log.i(TAG, "Rotation: " + rotation);
+
+        this.rotation = rotation;
+        invalidate();
     }
 
     /**
      * Sets the size of the timer ring, and the size of the view
-     * @param size
+     * @param size In pixels
      */
     public void setSize(int size) {
         ViewGroup.LayoutParams params = getLayoutParams();
@@ -62,21 +93,26 @@ public class Timer extends View {
         setLayoutParams(params);
     }
 
+    /**
+     * Sets the thickness of the ring stroke.
+     * @param thickness In Pixels
+     */
     public void setRingThickness(int thickness) {
         arcPaint.setStrokeWidth(thickness);
 
-        arcRect.left = thickness / 2;
-        arcRect.top = thickness / 2;
-        arcRect.right = getMeasuredWidth() - (thickness / 2);
-        arcRect.bottom = getMeasuredHeight() - (thickness / 2);
+        //We need to adjust the arc rects as it draws in the middle of the stroke width
+        arcRect.left = arcRect.top = thickness / 2;
+        arcRect.right = arcRect.bottom = getMeasuredWidth() - (thickness / 2);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Shader gradient = new SweepGradient(arcRect.width() / 2, arcRect.width() / 2, Color.RED, Color.TRANSPARENT);
+        canvas.rotate(rotation, canvas.getWidth() / 2, canvas.getHeight() / 2);
+
+        Shader gradient = new SweepGradient(arcRect.width() / 2, arcRect.width() / 2, Color.TRANSPARENT, Color.RED);
         arcPaint.setShader(gradient);
-        canvas.drawArc(arcRect, 0, 360, true, arcPaint);
+        canvas.drawArc(arcRect, 0, 360, false, arcPaint);
     }
 }
