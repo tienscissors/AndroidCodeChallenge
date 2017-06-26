@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -26,6 +25,7 @@ public class Timer extends View {
 
     public static final int DEFAULT_THICKNESS = 50; //pixels
 
+    public static final int DEFAULT_COLOR = 0xff458dd2; //the light blue from the example
 
     private Paint arcPaint = new Paint();
 
@@ -35,12 +35,15 @@ public class Timer extends View {
 
     private int rotation = -90;
 
+    private int color = DEFAULT_COLOR;
 
     public Timer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
         arcPaint.setStyle(Paint.Style.STROKE);
         arcPaint.setStrokeWidth(DEFAULT_THICKNESS);
+
+        setThemeColor(color);
     }
 
     /**
@@ -59,6 +62,7 @@ public class Timer extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         setRingThickness((int) arcPaint.getStrokeWidth());
+        setThemeColor(color);
     }
 
     public void start() {
@@ -105,14 +109,20 @@ public class Timer extends View {
         arcRect.right = arcRect.bottom = getMeasuredWidth() - (thickness / 2);
     }
 
+    /**
+     * Sets the color for the ring and the timer text
+     *
+     * @param color In ARGB format
+     */
+    public void setThemeColor(int color) {
+        arcPaint.setShader(new SweepGradient(arcRect.width() / 2, arcRect.width() / 2, Color.TRANSPARENT, color));
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         canvas.rotate(rotation, canvas.getWidth() / 2, canvas.getHeight() / 2);
-
-        Shader gradient = new SweepGradient(arcRect.width() / 2, arcRect.width() / 2, Color.TRANSPARENT, Color.RED);
-        arcPaint.setShader(gradient);
         canvas.drawArc(arcRect, 0, 360, false, arcPaint);
     }
 }

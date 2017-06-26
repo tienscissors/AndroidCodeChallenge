@@ -1,5 +1,6 @@
 package com.example.androidcodechallenge;
 
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,35 +24,43 @@ public class MainActivity extends AppCompatActivity {
 
         timer = (Timer) findViewById(R.id.timer);
 
-//        DisplayMetrics displayMetrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-//
-//        final int width = displayMetrics.widthPixels;
-//
-//        ViewTreeObserver observer = timer.getViewTreeObserver();
-//        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-//            @Override
-//            public boolean onPreDraw() {
-//                ViewTreeObserver observer = timer.getViewTreeObserver();
-//                if(observer != null) {
-//                    observer.removeOnPreDrawListener(this);
-//                }
-//
-//                timer.setSize(width / 2);
-//
-//                timer.setRingThickness(40);
-//
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        timer.setSize(width / 4);
-//                    }
-//                }, 5000);
-//
-//
-//                return false;
-//            }
-//        });
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        final int width = displayMetrics.widthPixels;
+
+        ViewTreeObserver observer = timer.getViewTreeObserver();
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                ViewTreeObserver observer = timer.getViewTreeObserver();
+                if(observer != null) {
+                    observer.removeOnPreDrawListener(this);
+                }
+
+                timer.setSize(width / 2);
+
+                timer.setRingThickness(40);
+
+                return false;
+            }
+        });
+
+
+        //TESTS
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                timer.setRingThickness(80);
+            }
+        }, 5000);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                timer.setThemeColor(Color.MAGENTA);
+            }
+        }, 8000);
     }
 
 
